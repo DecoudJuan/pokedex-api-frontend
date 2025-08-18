@@ -12,11 +12,12 @@ if (!API_URL) {
   throw new Error('VITE_API_URL no está definida en producción');
 }
 
-
-
 export const api = axios.create({
   baseURL: API_URL,
 });
+
+if (!import.meta.env.DEV) console.log('API base URL =>', API_URL);
+
 
 export async function listPokemons(params: {
   page?: number;

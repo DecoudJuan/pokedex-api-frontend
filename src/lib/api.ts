@@ -1,8 +1,21 @@
 import axios from "axios";
 import type { Ability, Pokemon } from "./types";
 
+
+const API_URL =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? 'http://localhost:3000' : undefined);
+
+
+
+if (!API_URL) {
+  throw new Error('VITE_API_URL no está definida en producción');
+}
+
+
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  baseURL: API_URL,
 });
 
 export async function listPokemons(params: {

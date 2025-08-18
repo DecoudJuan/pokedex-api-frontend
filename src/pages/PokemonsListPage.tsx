@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { listPokemons } from "../lib/api";
 import SearchBar from "../components/SearchBar";
@@ -25,6 +25,10 @@ export default function PokemonsListPage() {
     }, [data, q]);
   
 
+    useEffect(() => {
+      console.log("DATA EN QUERY:", data);
+    }, [data]);
+
   return (
 
 
@@ -33,7 +37,7 @@ export default function PokemonsListPage() {
         <Header />
         <SearchBar value={q} onChange={setQ} />
 
-
+      
         <div className="max-w-5xl mx-auto px-4 py-4">
         <div className="bg-white rounded-2xl p-4 shadow-lg">
           {isLoading && <div className="p-6">Cargando…</div>}
@@ -45,7 +49,7 @@ export default function PokemonsListPage() {
 
           {!isLoading && !isError && filtered.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                             {filtered.map((p: any) => (
+                  {filtered.map((p: any) => (
                  <PokemonCard
                    key={p.id}
                    name={p.name}

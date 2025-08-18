@@ -3,8 +3,11 @@ import type { Ability, Pokemon } from "./types";
 
 
 const API_URL =
-  import.meta.env.VITE_API_URL ??
+  import.meta.env.VITE_API_URL || 
   (import.meta.env.DEV ? 'http://localhost:3000' : undefined);
+
+  console.log('API base URL =>', API_URL);   // dejalo logueado en dev
+
 
 
 
@@ -20,13 +23,10 @@ if (!import.meta.env.DEV) console.log('API base URL =>', API_URL);
 
 
 export async function listPokemons(params: {
-  page?: number;
-  limit?: number;
-  search?: string;
-  type?: string;
+  page?: number; limit?: number; search?: string; type?: string;
 } = {}): Promise<Pokemon[]> {
-  const { data } = await api.get("/pokemons", { params });
-  return data;
+  const { data } = await api.get<Pokemon[]>('/pokemons', { params });
+  return Array.isArray(data) ? data : [];
 }
 
 export async function createPokemon(body: {

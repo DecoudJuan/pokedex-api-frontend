@@ -3,8 +3,7 @@ import type { Ability, Pokemon } from "./types";
 
 
 const API_URL =
-  import.meta.env.VITE_API_URL || 
-  (import.meta.env.DEV ? 'http://localhost:3000' : undefined);
+  import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   console.log('API base URL =>', API_URL);   // dejalo logueado en dev
 

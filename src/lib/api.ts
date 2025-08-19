@@ -5,10 +5,7 @@ import type { Ability, Pokemon } from "./types";
 const API_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-  console.log('API base URL =>', API_URL);   // dejalo logueado en dev
-
-
-
+  console.log('API base URL =>', API_URL);
 
 if (!API_URL) {
   throw new Error('VITE_API_URL no está definida en producción');
@@ -35,6 +32,14 @@ export async function createPokemon(body: {
 }): Promise<Pokemon> {
   const { data } = await api.post("/pokemons", body);
   return data;
+}
+
+export async function deletePokemon(id: string): Promise<void> {
+  const res = await fetch(`${API_URL}/pokemons/${id}`, { method: 'DELETE' });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body?.message ?? `Error eliminando Pokémon (status ${res.status})`);
+  }
 }
 
 export async function listAbilities(params: { name?: string } = {}): Promise<Ability[]> {

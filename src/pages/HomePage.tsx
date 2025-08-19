@@ -31,9 +31,7 @@ export default function HomePage() {
             title="Ver habilidades"
             description="Buscar por nombre"
           />
-
-
-
+          
           <MenuCard
             to="/abilities/pokemons"
             icon={<Sparkles className="w-8 h-8 text-purple-600" />}

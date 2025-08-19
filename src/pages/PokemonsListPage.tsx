@@ -6,6 +6,8 @@ import Header from "../components/Header";
 import PokemonCard from "../components/PokemonCard";
 import EditPokemonModal from "../components/EditPokemonModal";
 import type { Pokemon } from "../lib/types";
+import MenuCard from "../components/MenuCard";
+import { Plus } from "lucide-react";
 
 export default function PokemonsListPage() {
   const [q, setQ] = useState("");
@@ -29,9 +31,11 @@ export default function PokemonsListPage() {
       qc.setQueryData<Pokemon[]>(queryKey, (old = []) => old.filter((p) => p.id !== id));
       return { prev };
     },
+
     onError: (_e, _id, ctx) => {
       if (ctx?.prev) qc.setQueryData(queryKey, ctx.prev);
     },
+
     onSettled: () => {
       qc.invalidateQueries({ queryKey });
     },
@@ -79,8 +83,10 @@ export default function PokemonsListPage() {
       <Header />
       <SearchBar value={q} onChange={setQ} />
 
+
       <div className="max-w-5xl mx-auto px-4 py-4">
         <div className="bg-white rounded-2xl p-4 shadow-lg">
+
           {isLoading && <div className="p-6">Cargando…</div>}
           {isError && <div className="p-6 text-red-600">Error cargando</div>}
 
@@ -88,8 +94,19 @@ export default function PokemonsListPage() {
             <div className="p-6 text-slate-600">No hay pokémon.</div>
           )}
 
+
           {!isLoading && !isError && filtered.length > 0 && (
+            
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+
+              <MenuCard
+              to="/pokemons/new"
+              icon={<Plus className="w-8 h-8 text-red-600" />}
+              title="Crear Pokémon"
+              description="Agregar uno nuevo"
+              />
+
+
               {filtered.map((p: Pokemon) => (
                 <PokemonCard
                   key={p.id}

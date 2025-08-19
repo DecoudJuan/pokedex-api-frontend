@@ -42,6 +42,23 @@ export async function deletePokemon(id: string): Promise<void> {
   }
 }
 
+export async function updatePokemon(
+  id: string,
+  data: { name?: string; type?: string; imageUrl?: string | null }
+) {
+  const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+  const res = await fetch(`${API}/pokemons/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body?.message ?? `Error actualizando (status ${res.status})`);
+  }
+  return res.json(); // ← devuelve el PokemonDto actualizado
+}
+
 export async function listAbilities(params: { name?: string } = {}): Promise<Ability[]> {
   const { data } = await api.get("/abilities", { params });
   return data;

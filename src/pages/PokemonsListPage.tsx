@@ -1,20 +1,19 @@
+// src/pages/PokemonsListPage.tsx
 import { useState, useMemo } from "react";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  keepPreviousData,
-} from "@tanstack/react-query";
-import { listPokemons, deletePokemon } from "../lib/api";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { listPokemons, deletePokemon, updatePokemon } from "../lib/api";
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
 import PokemonCard from "../components/PokemonCard";
+import EditPokemonModal from "../components/EditPokemonModal";
 import type { Pokemon } from "../lib/types";
 
 export default function PokemonsListPage() {
   const [q, setQ] = useState("");
-  const qc = useQueryClient();
+  const [editOpen, setEditOpen] = useState(false);
+  const [selected, setSelected] = useState<Pokemon | null>(null);
 
+  const qc = useQueryClient();
   const queryKey = ["pokemons", { page: 1, limit: 12 }];
 
   const { data, isLoading, isError } = useQuery({
@@ -23,22 +22,37 @@ export default function PokemonsListPage() {
     placeholderData: keepPreviousData,
   });
 
-  // Mutation para DELETE con actualización optimista
-  const { mutateAsync: remove, isPending } = useMutation({
+  // DELETE
+  const { mutateAsync: remove, isPending: deleting } = useMutation({
     mutationFn: (id: string) => deletePokemon(id),
     onMutate: async (id) => {
       await qc.cancelQueries({ queryKey });
       const prev = qc.getQueryData<Pokemon[]>(queryKey);
-      qc.setQueryData<Pokemon[]>(queryKey, (old = []) =>
-        old.filter((p) => p.id !== id)
-      );
+      qc.setQueryData<Pokemon[]>(queryKey, (old = []) => old.filter((p) => p.id !== id));
       return { prev };
     },
-    onError: (_err, _id, ctx) => {
-      if (ctx?.prev) qc.setQueryData(queryKey, ctx.prev); // revertir
+    onError: (_e, _id, ctx) => {
+      if (ctx?.prev) qc.setQueryData(queryKey, ctx.prev);
     },
     onSettled: () => {
-      qc.invalidateQueries({ queryKey }); // revalidar server
+      qc.invalidateQueries({ queryKey });
+    },
+  });
+
+  // PUT (update)
+  const { mutateAsync: saveEdit, isPending: saving } = useMutation({
+    mutationFn: (payload: { id: string; values: { name: string; type: string; imageUrl?: string | null } }) =>
+      updatePokemon(payload.id, payload.values),
+    onSuccess: (updated: Pokemon) => {
+      // Actualización caché local
+      qc.setQueryData<Pokemon[]>(queryKey, (old = []) =>
+        old.map((p) => (p.id === updated.id ? updated : p))
+      );
+      setEditOpen(false);
+      setSelected(null);
+    },
+    onError: (e: any) => {
+      alert(e?.message ?? "No se pudo actualizar");
     },
   });
 
@@ -46,14 +60,23 @@ export default function PokemonsListPage() {
     const s = q.trim().toLowerCase();
     const pokemons = data || [];
     if (!s) return pokemons;
-    return pokemons.filter((p: Pokemon) =>
-      String(p.name).toLowerCase().includes(s)
-    );
+    return pokemons.filter((p: Pokemon) => String(p.name).toLowerCase().includes(s));
   }, [data, q]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("¿Seguro que querés eliminar este Pokémon?")) return;
     await remove(id);
+  };
+
+  const handleEdit = (id: string) => {
+    const current = (data || []).find((p) => p.id === id) || null;
+    setSelected(current);
+    setEditOpen(true);
+  };
+
+  const submitEdit = async (values: { name: string; type: string; imageUrl?: string | null }) => {
+    if (!selected) return;
+    await saveEdit({ id: selected.id, values });
   };
 
   return (
@@ -80,16 +103,27 @@ export default function PokemonsListPage() {
                   imageUrl={p.imageUrl ?? undefined}
                   type={p.type}
                   onDelete={handleDelete}
+                  onEdit={handleEdit}
                 />
               ))}
             </div>
           )}
 
-          {isPending && (
-            <div className="p-2 text-sm text-slate-500">Eliminando…</div>
+          {(deleting || saving) && (
+            <div className="p-2 text-sm text-slate-500">
+              {deleting ? "Eliminando…" : saving ? "Guardando cambios…" : null}
+            </div>
           )}
         </div>
       </div>
+
+      <EditPokemonModal
+        open={editOpen}
+        pokemon={selected}
+        onClose={() => { setEditOpen(false); setSelected(null); }}
+        onSubmit={submitEdit}
+        submitting={saving}
+      />
     </div>
   );
 }

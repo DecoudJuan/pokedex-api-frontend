@@ -17,6 +17,7 @@ export default function PokemonCard({
   onDelete,
   onEdit,
 }: Props) {
+  
   const defaultImage =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXXdYR-FXBMWaKl4eu5o4TUuGmaH9HOxK2TQ&s";
 

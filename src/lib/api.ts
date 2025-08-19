@@ -2,14 +2,7 @@ import axios from "axios";
 import type { Ability, Pokemon } from "./types";
 
 
-const API_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
-  console.log('API base URL =>', API_URL);
-
-if (!API_URL) {
-  throw new Error('VITE_API_URL no está definida en producción');
-}
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -46,8 +39,7 @@ export async function updatePokemon(
   id: string,
   data: { name?: string; type?: string; imageUrl?: string | null }
 ) {
-  const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
-  const res = await fetch(`${API}/pokemons/${id}`, {
+  const res = await fetch(`${API_URL}/pokemons/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -56,7 +48,7 @@ export async function updatePokemon(
     const body = await res.json().catch(() => ({}));
     throw new Error(body?.message ?? `Error actualizando (status ${res.status})`);
   }
-  return res.json(); // ← devuelve el PokemonDto actualizado
+  return res.json(); 
 }
 
 export async function listAbilities(params: { name?: string } = {}): Promise<Ability[]> {

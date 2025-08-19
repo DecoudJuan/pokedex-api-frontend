@@ -5,7 +5,7 @@ import Header from "../components/Header";
 
 export default function AbilitiesPage() {
   const [name, setName] = useState("");
-  const { data = [], isLoading, isError, refetch } = useQuery({
+  const { isLoading, isError, refetch } = useQuery({
     queryKey: ["abilities", { name }],
     queryFn: () => listAbilities({ name }),
   });
@@ -25,13 +25,7 @@ export default function AbilitiesPage() {
           {isError && <div className="text-red-600">Error cargando</div>}
           {!isLoading && !isError && (
             <ul className="space-y-2">
-              {data.map((a: any) => (
-                <li key={a.id} className="border rounded p-3">
-                  <div className="font-medium">{a.name}</div>
-                  <div className="text-sm text-slate-500">{a.description}</div>
-                </li>
-              ))}
-              {data.length === 0 && <div className="text-slate-600">Sin resultados</div>}
+              <h1> Próximamente </h1>
             </ul>
           )}
         </div>

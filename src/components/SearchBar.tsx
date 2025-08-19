@@ -20,7 +20,6 @@ export default function SearchBar({ value, onChange }: Props) {
   return (
     <div className="max-w-5xl mx-auto px-4 -mt-6">
       <div className="flex items-center gap-3">
-        {/* pill */}
         <label
           htmlFor={id}
           className="flex-1 bg-white rounded-full shadow ring-1 ring-black/5 px-4 py-2 flex items-center gap-2"
@@ -34,7 +33,6 @@ export default function SearchBar({ value, onChange }: Props) {
           />
         </label>
 
-        {/* botón filtros + menú */}
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setOpen((v) => !v)}
@@ -51,20 +49,14 @@ export default function SearchBar({ value, onChange }: Props) {
               role="menu"
               className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow ring-1 ring-black/5 p-1 z-50"
             >
-              <MenuLink to="/pokemons/new" onSelect={() => setOpen(false)}>
-                Crear Pokémon
+              <MenuLink to="/trainers" onSelect={() => setOpen(false)}>
+                Ver entrenadores
+              </MenuLink>
+              <MenuLink to="/pokemons" onSelect={() => setOpen(false)}>
+                Ver pokemons
               </MenuLink>
               <MenuLink to="/abilities" onSelect={() => setOpen(false)}>
                 Ver habilidades
-              </MenuLink>
-              <MenuLink to="/pokemons" onSelect={() => setOpen(false)}>
-                Ver pokémon
-              </MenuLink>
-              <MenuLink
-                to="/abilities/pokemons"
-                onSelect={() => setOpen(false)}
-              >
-                Pokémon por habilidad
               </MenuLink>
             </div>
           )}

@@ -1,4 +1,3 @@
-// src/pages/PokemonsListPage.tsx
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { listPokemons, deletePokemon, updatePokemon } from "../lib/api";
@@ -22,7 +21,6 @@ export default function PokemonsListPage() {
     placeholderData: keepPreviousData,
   });
 
-  // DELETE
   const { mutateAsync: remove, isPending: deleting } = useMutation({
     mutationFn: (id: string) => deletePokemon(id),
     onMutate: async (id) => {
@@ -39,12 +37,10 @@ export default function PokemonsListPage() {
     },
   });
 
-  // PUT (update)
   const { mutateAsync: saveEdit, isPending: saving } = useMutation({
     mutationFn: (payload: { id: string; values: { name: string; type: string; imageUrl?: string | null } }) =>
       updatePokemon(payload.id, payload.values),
     onSuccess: (updated: Pokemon) => {
-      // Actualización caché local
       qc.setQueryData<Pokemon[]>(queryKey, (old = []) =>
         old.map((p) => (p.id === updated.id ? updated : p))
       );
@@ -64,7 +60,6 @@ export default function PokemonsListPage() {
   }, [data, q]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("¿Seguro que querés eliminar este Pokémon?")) return;
     await remove(id);
   };
 

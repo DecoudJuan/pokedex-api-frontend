@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import MenuCard from "../components/MenuCard";
 
-import { Plus, List, Star, Sparkles } from "lucide-react";
+import { List, Star, Brain } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -9,21 +9,25 @@ export default function HomePage() {
       <Header />
 
       <div className="max-w-2xl mx-auto px-4 mt-6">
-        <div className="grid sm:grid-cols-2 gap-y-4 justify-items-center items-center ">
+        <div className="grid sm:grid-cols-2 gap-y-8 justify-items-center items-center ">
           
           <MenuCard
             to="/pokemons"
             icon={<List className="w-8 h-8 text-blue-600" />}
-            title="Ver pokémon"
-            description="Listado con filtros"
+            title="Pokémons"
+            description="Ver todos los pokémons"
           />
-          
+
           <MenuCard
-            to="/pokemons/new"
-            icon={<Plus className="w-8 h-8 text-red-600" />}
-            title="Crear Pokémon"
-            description="Agregar uno nuevo"
+            to="/trainers"
+            icon={<Brain className="w-8 h-8 text-purple-600" />}
+            title="Entrenadores"
+            description="Ver todos los entrenadores"
           />
+
+        </div>
+
+        <div className="grid sm:grid-cols-1 justify-items-center items-center mt-5">
 
           <MenuCard
             to="/abilities"
@@ -31,14 +35,9 @@ export default function HomePage() {
             title="Ver habilidades"
             description="Buscar por nombre"
           />
-          
-          <MenuCard
-            to="/abilities/pokemons"
-            icon={<Sparkles className="w-8 h-8 text-purple-600" />}
-            title="Pokémon por habilidad"
-            description="Separados por ability"
-          />
+        
         </div>
+
       </div>
     </div>
   );

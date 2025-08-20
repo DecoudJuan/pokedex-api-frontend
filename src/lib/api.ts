@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Ability, Pokemon } from "./types";
+import type { Ability, Pokemon, Trainer } from "./types";
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -11,10 +11,50 @@ export const api = axios.create({
 if (!import.meta.env.DEV) console.log('API base URL =>', API_URL);
 
 
+// TRAINERS
+
+export async function listTrainers(params: {
+  page?: number; limit?: number; search?: string; type?: string;
+} = {}): Promise<Trainer[]> {
+  const { data } = await api.get<Trainer[]>("/trainers", { params });
+  return Array.isArray(data) ? data : [];
+}
+
+export async function getTrainerById(id: string): Promise<Trainer> {
+  const { data } = await api.get<Trainer>(`/trainers/${id}`);
+  return data;
+}
+
+export async function createTrainer(body: {
+  id: string;
+  name: string;
+  imageUrl?: string | null;
+}): Promise<Trainer> {
+  const { data } = await api.post<Trainer>("/trainers", body);
+  return data;
+}
+
+export async function updateTrainer(
+  id: string,
+  values: { name?: string; imageUrl?: string | null }
+): Promise<Trainer> {
+  const { data } = await api.put<Trainer>(`/trainers/${id}`, values);
+  return data;
+}
+
+export async function deleteTrainer(id: string): Promise<void> {
+  await api.delete(`/trainers/${id}`);
+}
+
+
+
+// POKEMONS
+
+
 export async function listPokemons(params: {
   page?: number; limit?: number; search?: string; type?: string;
 } = {}): Promise<Pokemon[]> {
-  const { data } = await api.get<Pokemon[]>('/pokemons', { params });
+  const { data } = await api.get<Pokemon[]>("/pokemons", { params });
   return Array.isArray(data) ? data : [];
 }
 
@@ -70,3 +110,5 @@ export const getPokemonAbilities = async (id: string): Promise<Ability[]> => {
   const { data } = await api.get(`/pokemons/${id}/abilities`);
   return data;
 };
+
+
